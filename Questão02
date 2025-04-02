@@ -1,0 +1,41 @@
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Solicita o nome completo do usuário
+        Console.Write("Digite seu nome completo: ");
+        string nomeCompleto = Console.ReadLine();
+
+        // Chama a função para deslocar as letras do nome
+        string nomeDeslocado = DeslocarLetras(nomeCompleto);
+
+        // Exibe o nome com as letras deslocadas
+        Console.WriteLine("Nome com letras deslocadas: " + nomeDeslocado);
+    }
+
+    // Função para deslocar cada letra duas posições para frente no alfabeto
+    static string DeslocarLetras(string nome)
+    {
+        char[] nomeArray = nome.ToCharArray(); // Converte o nome para um array de caracteres
+        for (int i = 0; i < nomeArray.Length; i++)
+        {
+            char caractere = nomeArray[i];
+
+            // Verifica se o caractere é uma letra (de A a Z ou de a a z)
+            if (char.IsLetter(caractere))
+            {
+                // Converte a letra para maiúscula ou minúscula
+                bool isLower = char.IsLower(caractere);
+                char baseChar = isLower ? 'a' : 'A';
+
+                // Desloca a letra 2 posições para frente no alfabeto
+                nomeArray[i] = (char)(((caractere - baseChar + 2) % 26) + baseChar);
+            }
+        }
+
+        // Retorna o novo nome com as letras deslocadas
+        return new string(nomeArray);
+    }
+}
