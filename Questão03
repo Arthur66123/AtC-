@@ -1,0 +1,92 @@
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Solicita ao usuário o primeiro número e valida a entrada
+        double numero1 = ObterNumeroValido("Digite o primeiro número: ");
+        
+        // Solicita ao usuário o segundo número e valida a entrada
+        double numero2 = ObterNumeroValido("Digite o segundo número: ");
+        
+        // Exibe as opções de operação
+        Console.WriteLine("Escolha a operação matemática:");
+        Console.WriteLine("1 - Soma");
+        Console.WriteLine("2 - Subtração");
+        Console.WriteLine("3 - Multiplicação");
+        Console.WriteLine("4 - Divisão");
+
+        // Solicita ao usuário que escolha a operação
+        int operacao = ObterOperacaoValida();
+        
+        // Realiza o cálculo conforme a operação escolhida
+        double resultado = 0;
+        switch (operacao)
+        {
+            case 1: // Soma
+                resultado = numero1 + numero2;
+                break;
+            case 2: // Subtração
+                resultado = numero1 - numero2;
+                break;
+            case 3: // Multiplicação
+                resultado = numero1 * numero2;
+                break;
+            case 4: // Divisão
+                // Verifica se o divisor é zero
+                if (numero2 == 0)
+                {
+                    Console.WriteLine("Erro! Divisão por zero não permitida.");
+                    return; // Encerra o programa se houver divisão por zero
+                }
+                resultado = numero1 / numero2;
+                break;
+        }
+        
+        // Exibe o resultado da operação
+        Console.WriteLine($"Resultado: {resultado}");
+    }
+
+    // Função para obter um número válido
+    static double ObterNumeroValido(string mensagem)
+    {
+        double numero;
+        while (true)
+        {
+            Console.Write(mensagem);
+            string input = Console.ReadLine();
+            
+            // Verifica se o número inserido é válido
+            if (double.TryParse(input, out numero))
+            {
+                return numero;
+            }
+            else
+            {
+                Console.WriteLine("Entrada inválida! Por favor, digite um número válido.");
+            }
+        }
+    }
+
+    // Função para obter uma operação válida
+    static int ObterOperacaoValida()
+    {
+        int operacao;
+        while (true)
+        {
+            Console.Write("Escolha uma operação (1-4): ");
+            string input = Console.ReadLine();
+            
+            // Verifica se a operação é válida (1, 2, 3 ou 4)
+            if (int.TryParse(input, out operacao) && operacao >= 1 && operacao <= 4)
+            {
+                return operacao;
+            }
+            else
+            {
+                Console.WriteLine("Opção inválida! Por favor, escolha uma operação válida (1-4).");
+            }
+        }
+    }
+}
