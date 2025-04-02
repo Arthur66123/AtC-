@@ -1,0 +1,130 @@
+using System;
+using System.IO;
+
+class Produto
+{
+    public string Nome { get; set; }
+    public int Quantidade { get; set; }
+    public decimal PrecoUnitario { get; set; }
+
+    public Produto(string nome, int quantidade, decimal precoUnitario)
+    {
+        Nome = nome;
+        Quantidade = quantidade;
+        PrecoUnitario = precoUnitario;
+    }
+
+    public override string ToString()
+    {
+        return $"Produto: {Nome} | Quantidade: {Quantidade} | Preço: R$ {PrecoUnitario:F2}";
+    }
+}
+
+class Program
+{
+    static Produto[] estoque = new Produto[5];
+    static int contadorProdutos = 0;
+
+    static void Main(string[] args)
+    {
+        string caminhoArquivo = "estoque.txt";
+
+        while (true)
+        {
+            ExibirMenu();
+
+            string opcao = Console.ReadLine();
+            switch (opcao)
+            {
+                case "1":
+                    InserirProduto(caminhoArquivo);
+                    break;
+                case "2":
+                    ListarProdutos(caminhoArquivo);
+                    break;
+                case "3":
+                    Console.WriteLine("Saindo do programa...");
+                    return;
+                default:
+                    Console.WriteLine("Opção inválida! Tente novamente.");
+                    break;
+            }
+        }
+    }
+
+    static void ExibirMenu()
+    {
+        Console.Clear();
+        Console.WriteLine("=== Sistema de Gerenciamento de Estoque ===");
+        Console.WriteLine("1. Inserir Produto");
+        Console.WriteLine("2. Listar Produtos");
+        Console.WriteLine("3. Sair");
+        Console.Write("Escolha uma opção: ");
+    }
+
+    static void InserirProduto(string caminhoArquivo)
+    {
+        if (contadorProdutos >= 5)
+        {
+            Console.WriteLine("Limite de produtos atingido!");
+            Console.ReadKey();
+            return;
+        }
+
+        Console.Clear();
+        Console.Write("Digite o nome do produto: ");
+        string nome = Console.ReadLine();
+
+        Console.Write("Digite a quantidade em estoque: ");
+        int quantidade = int.Parse(Console.ReadLine());
+
+        Console.Write("Digite o preço unitário: ");
+        decimal precoUnitario = decimal.Parse(Console.ReadLine());
+
+        Produto novoProduto = new Produto(nome, quantidade, precoUnitario);
+        estoque[contadorProdutos] = novoProduto;
+        contadorProdutos++;
+
+        // Adicionando o novo produto ao arquivo
+        using (StreamWriter writer = new StreamWriter(caminhoArquivo, true))
+        {
+            writer.WriteLine($"{novoProduto.Nome},{novoProduto.Quantidade},{novoProduto.PrecoUnitario:F2}");
+        }
+
+        Console.WriteLine("Produto inserido com sucesso!");
+        Console.ReadKey();
+    }
+
+    static void ListarProdutos(string caminhoArquivo)
+    {
+        Console.Clear();
+        if (!File.Exists(caminhoArquivo))
+        {
+            Console.WriteLine("Nenhum produto cadastrado.");
+            Console.ReadKey();
+            return;
+        }
+
+        string[] linhas = File.ReadAllLines(caminhoArquivo);
+        if (linhas.Length == 0)
+        {
+            Console.WriteLine("Nenhum produto cadastrado.");
+            Console.ReadKey();
+            return;
+        }
+
+        Console.WriteLine("Produtos cadastrados:");
+        foreach (var linha in linhas)
+        {
+            var dadosProduto = linha.Split(',');
+            string nome = dadosProduto[0];
+            int quantidade = int.Parse(dadosProduto[1]);
+            decimal precoUnitario = decimal.Parse(dadosProduto[2]);
+
+            Produto produto = new Produto(nome, quantidade, precoUnitario);
+            Console.WriteLine(produto);
+        }
+
+        Console.ReadKey();
+    }
+}
