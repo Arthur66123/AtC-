@@ -1,0 +1,50 @@
+using System;
+
+class Aluno
+{
+    // Atributos da classe
+    public string Nome { get; set; }
+    public string Matricula { get; set; }
+    public string Curso { get; set; }
+    public double MediaNotas { get; set; }
+
+    // Método para exibir os dados do aluno
+    public void ExibirDados()
+    {
+        Console.WriteLine($"Nome: {Nome}");
+        Console.WriteLine($"Matrícula: {Matricula}");
+        Console.WriteLine($"Curso: {Curso}");
+        Console.WriteLine($"Média das Notas: {MediaNotas:F2}");
+    }
+
+    // Método para verificar a aprovação do aluno
+    public string VerificarAprovacao()
+    {
+        if (MediaNotas >= 7)
+            return "Aprovado";
+        else
+            return "Reprovado";
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Criando um objeto da classe Aluno com os meus dados
+        Aluno aluno = new Aluno
+        {
+            Nome = "Carlos Silva",
+            Matricula = "123456789",
+            Curso = "Análise e Desenvolvimento de Sistemas",
+            MediaNotas = 8.5
+        };
+
+        // Exibindo os dados do aluno
+        aluno.ExibirDados();
+
+        // Verificando e exibindo a situação de aprovação
+        string situacao = aluno.VerificarAprovacao();
+        Console.WriteLine($"Situação: {situacao}");
+    }
+}
