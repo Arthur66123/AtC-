@@ -1,0 +1,43 @@
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Solicita a data de nascimento do usuário
+        Console.Write("Digite sua data de nascimento (dd/mm/aaaa): ");
+        string dataNascimentoString = Console.ReadLine();
+
+        // Converte a string para um objeto DateTime
+        DateTime dataNascimento;
+        if (!DateTime.TryParseExact(dataNascimentoString, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out dataNascimento))
+        {
+            Console.WriteLine("Data inválida! Certifique-se de usar o formato dd/mm/aaaa.");
+            return;
+        }
+
+        // Obtém a data atual
+        DateTime dataAtual = DateTime.Now;
+
+        // Calcula o próximo aniversário
+        DateTime proximoAniversario = new DateTime(dataAtual.Year, dataNascimento.Month, dataNascimento.Day);
+
+        // Se o aniversário já passou este ano, calcula para o próximo ano
+        if (proximoAniversario < dataAtual)
+        {
+            proximoAniversario = proximoAniversario.AddYears(1);
+        }
+
+        // Calcula a quantidade de dias até o próximo aniversário
+        int diasFaltando = (proximoAniversario - dataAtual).Days;
+
+        // Exibe o resultado
+        Console.WriteLine($"Faltam {diasFaltando} dias para o seu próximo aniversário!");
+
+        // Se faltar menos de 7 dias, exibe uma mensagem especial
+        if (diasFaltando < 7)
+        {
+            Console.WriteLine("Está quase lá! Seu aniversário está chegando!");
+        }
+    }
+}
