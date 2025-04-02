@@ -1,0 +1,207 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+public class Contato
+{
+    public string Nome { get; set; }
+    public string Telefone { get; set; }
+    public string Email { get; set; }
+
+    public Contato(string nome, string telefone, string email)
+    {
+        Nome = nome;
+        Telefone = telefone;
+        Email = email;
+    }
+}
+
+public abstract class ContatoFormatter
+{
+    public abstract void ExibirContatos(List<Contato> contatos);
+}
+
+public class MarkdownFormatter : ContatoFormatter
+{
+    public override void ExibirContatos(List<Contato> contatos)
+    {
+        Console.WriteLine("## Lista de Contatos\n");
+
+        foreach (var contato in contatos)
+        {
+            Console.WriteLine($"- **Nome:** {contato.Nome}");
+            Console.WriteLine($"  📞 Telefone: {contato.Telefone}");
+            Console.WriteLine($"  📧 Email: {contato.Email}\n");
+        }
+    }
+}
+
+public class TabelaFormatter : ContatoFormatter
+{
+    public override void ExibirContatos(List<Contato> contatos)
+    {
+        Console.WriteLine("----------------------------------------");
+        Console.WriteLine("| Nome               | Telefone         | Email             |");
+        Console.WriteLine("----------------------------------------");
+
+        foreach (var contato in contatos)
+        {
+            Console.WriteLine($"| {contato.Nome,-18} | {contato.Telefone,-15} | {contato.Email,-17} |");
+        }
+
+        Console.WriteLine("----------------------------------------");
+    }
+}
+
+public class RawTextFormatter : ContatoFormatter
+{
+    public override void ExibirContatos(List<Contato> contatos)
+    {
+        foreach (var contato in contatos)
+        {
+            Console.WriteLine($"Nome: {contato.Nome} | Telefone: {contato.Telefone} | Email: {contato.Email}");
+        }
+    }
+}
+
+class Program
+{
+    static string arquivoContatos = "contatos.txt";
+
+    static void Main(string[] args)
+    {
+        List<Contato> contatos = CarregarContatos();
+        int opcao;
+
+        do
+        {
+            ExibirMenu();
+            opcao = ObterOpcao();
+
+            switch (opcao)
+            {
+                case 1:
+                    AdicionarContato(contatos);
+                    break;
+                case 2:
+                    EscolherFormatoExibicao(contatos);
+                    break;
+                case 3:
+                    Console.WriteLine("Encerrando programa...");
+                    break;
+                default:
+                    Console.WriteLine("Opção inválida. Tente novamente.");
+                    break;
+            }
+        }
+        while (opcao != 3);
+    }
+
+    static void ExibirMenu()
+    {
+        Console.Clear();
+        Console.WriteLine("=== Gerenciador de Contatos ===");
+        Console.WriteLine("1 - Adicionar novo contato");
+        Console.WriteLine("2 - Listar contatos cadastrados");
+        Console.WriteLine("3 - Sair");
+        Console.Write("Escolha uma opção: ");
+    }
+
+    static int ObterOpcao()
+    {
+        int opcao;
+        while (!int.TryParse(Console.ReadLine(), out opcao) || opcao < 1 || opcao > 3)
+        {
+            Console.WriteLine("Opção inválida. Por favor, digite um número entre 1 e 3.");
+            Console.Write("Escolha uma opção: ");
+        }
+        return opcao;
+    }
+
+    static void AdicionarContato(List<Contato> contatos)
+    {
+        Console.Clear();
+        Console.WriteLine("=== Adicionar Novo Contato ===");
+
+        Console.Write("Nome: ");
+        string nome = Console.ReadLine();
+
+        Console.Write("Telefone: ");
+        string telefone = Console.ReadLine();
+
+        Console.Write("Email: ");
+        string email = Console.ReadLine();
+
+        Contato novoContato = new Contato(nome, telefone, email);
+        contatos.Add(novoContato);
+
+        SalvarContato(novoContato);
+        Console.WriteLine("Contato cadastrado com sucesso!");
+        Console.WriteLine("Pressione qualquer tecla para continuar...");
+        Console.ReadKey();
+    }
+
+    static void SalvarContato(Contato contato)
+    {
+        try
+        {
+            using (StreamWriter sw = new StreamWriter(arquivoContatos, true))
+            {
+                sw.WriteLine($"{contato.Nome},{contato.Telefone},{contato.Email}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao salvar o contato: {ex.Message}");
+        }
+    }
+
+    static List<Contato> CarregarContatos()
+    {
+        List<Contato> contatos = new List<Contato>();
+
+        if (File.Exists(arquivoContatos))
+        {
+            string[] linhas = File.ReadAllLines(arquivoContatos);
+            foreach (string linha in linhas)
+            {
+                string[] dados = linha.Split(',');
+                if (dados.Length == 3)
+                {
+                    Contato contato = new Contato(dados[0], dados[1], dados[2]);
+                    contatos.Add(contato);
+                }
+            }
+        }
+        return contatos;
+    }
+
+    static void EscolherFormatoExibicao(List<Contato> contatos)
+    {
+        Console.Clear();
+        Console.WriteLine("Escolha o formato de exibição:");
+        Console.WriteLine("1 - Markdown");
+        Console.WriteLine("2 - Tabela");
+        Console.WriteLine("3 - Texto Puro");
+        Console.Write("Escolha uma opção: ");
+
+        int opcao;
+        while (!int.TryParse(Console.ReadLine(), out opcao) || opcao < 1 || opcao > 3)
+        {
+            Console.WriteLine("Opção inválida. Por favor, digite um número entre 1 e 3.");
+            Console.Write("Escolha uma opção: ");
+        }
+
+        ContatoFormatter formatter = opcao switch
+        {
+            1 => new MarkdownFormatter(),
+            2 => new TabelaFormatter(),
+            3 => new RawTextFormatter(),
+            _ => throw new InvalidOperationException("Opção inválida")
+        };
+
+        formatter.ExibirContatos(contatos);
+        Console.WriteLine("Pressione qualquer tecla para continuar...");
+        Console.ReadKey();
+    }
+}
