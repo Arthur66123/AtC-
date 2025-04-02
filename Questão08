@@ -1,0 +1,55 @@
+using System;
+
+class Funcionario
+{
+    // Atributos da classe Funcionario
+    public string Nome { get; set; }
+    public string Cargo { get; set; }
+    public decimal SalarioBase { get; set; }
+
+    // Construtor para inicializar os atributos
+    public Funcionario(string nome, string cargo, decimal salarioBase)
+    {
+        Nome = nome;
+        Cargo = cargo;
+        SalarioBase = salarioBase;
+    }
+
+    // Método para exibir os dados do funcionário
+    public virtual void ExibirSalario()
+    {
+        Console.WriteLine($"{Nome}, Cargo: {Cargo}, Salário Base: R$ {SalarioBase:F2}");
+    }
+}
+
+class Gerente : Funcionario
+{
+    // Construtor da classe Gerente que chama o construtor da classe base
+    public Gerente(string nome, string cargo, decimal salarioBase)
+        : base(nome, cargo, salarioBase)
+    { }
+
+    // Sobrescrita do método ExibirSalario para incluir o bônus de 20%
+    public override void ExibirSalario()
+    {
+        decimal salarioComBonus = SalarioBase * 1.2m; // 20% de bônus
+        Console.WriteLine($"{Nome}, Cargo: {Cargo}, Salário Base: R$ {SalarioBase:F2}, " +
+                          $"Salário com Bônus: R$ {salarioComBonus:F2}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Criando um objeto da classe Funcionario
+        Funcionario funcionario = new Funcionario("Carlos Souza", "Analista", 3000.00m);
+        funcionario.ExibirSalario(); // Exibindo salário do funcionário comum
+
+        Console.WriteLine(); // Linha em branco para separar as saídas
+
+        // Criando um objeto da classe Gerente
+        Gerente gerente = new Gerente("Maria Oliveira", "Gerente", 5000.00m);
+        gerente.ExibirSalario(); // Exibindo salário do gerente com bônus
+    }
+}
