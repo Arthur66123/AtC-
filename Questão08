@@ -1,0 +1,68 @@
+using System;
+
+class ContaBancaria
+{
+    // Atributos
+    public string Titular { get; set; }  // Público para o nome do titular
+    private decimal Saldo { get; set; }  // Privado para proteger o saldo
+
+    // Método para depositar um valor
+    public void Depositar(decimal valor)
+    {
+        if (valor > 0)
+        {
+            Saldo += valor;
+            Console.WriteLine($"Depósito de R$ {valor:F2} realizado com sucesso!");
+        }
+        else
+        {
+            Console.WriteLine("O valor do depósito deve ser positivo!");
+        }
+    }
+
+    // Método para sacar um valor
+    public void Sacar(decimal valor)
+    {
+        if (valor <= Saldo)
+        {
+            Saldo -= valor;
+            Console.WriteLine($"Saque de R$ {valor:F2} realizado com sucesso!");
+        }
+        else
+        {
+            Console.WriteLine("Saldo insuficiente para realizar o saque!");
+        }
+    }
+
+    // Método para exibir o saldo atual
+    public void ExibirSaldo()
+    {
+        Console.WriteLine($"Saldo atual: R$ {Saldo:F2}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Criando um objeto da classe ContaBancaria
+        ContaBancaria conta = new ContaBancaria();
+        conta.Titular = "João Silva"; // Definindo o titular da conta
+
+        // Exibindo o nome do titular
+        Console.WriteLine($"Titular: {conta.Titular}\n");
+
+        // Realizando um depósito
+        conta.Depositar(500.00m);
+        conta.ExibirSaldo();
+
+        // Tentativa de saque maior que o saldo
+        Console.WriteLine("\nTentativa de saque: R$ 700,00");
+        conta.Sacar(700.00m);
+
+        // Realizando um saque válido
+        Console.WriteLine("\nSaque de R$ 200,00");
+        conta.Sacar(200.00m);
+        conta.ExibirSaldo();
+    }
+}
