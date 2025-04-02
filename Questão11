@@ -1,0 +1,121 @@
+using System;
+using System.IO;
+
+class Program
+{
+    static string arquivoContatos = "contatos.txt";
+
+    static void Main(string[] args)
+    {
+        int opcao;
+
+        do
+        {
+            ExibirMenu();
+            opcao = ObterOpcao();
+
+            switch (opcao)
+            {
+                case 1:
+                    AdicionarContato();
+                    break;
+                case 2:
+                    ListarContatos();
+                    break;
+                case 3:
+                    Console.WriteLine("Encerrando programa...");
+                    break;
+                default:
+                    Console.WriteLine("Opção inválida. Tente novamente.");
+                    break;
+            }
+        }
+        while (opcao != 3);
+    }
+
+    static void ExibirMenu()
+    {
+        Console.Clear();
+        Console.WriteLine("=== Gerenciador de Contatos ===");
+        Console.WriteLine("1 - Adicionar novo contato");
+        Console.WriteLine("2 - Listar contatos cadastrados");
+        Console.WriteLine("3 - Sair");
+        Console.Write("Escolha uma opção: ");
+    }
+
+    static int ObterOpcao()
+    {
+        int opcao;
+        while (!int.TryParse(Console.ReadLine(), out opcao) || opcao < 1 || opcao > 3)
+        {
+            Console.WriteLine("Opção inválida. Por favor, digite um número entre 1 e 3.");
+            Console.Write("Escolha uma opção: ");
+        }
+        return opcao;
+    }
+
+    static void AdicionarContato()
+    {
+        Console.Clear();
+        Console.WriteLine("=== Adicionar Novo Contato ===");
+
+        Console.Write("Nome: ");
+        string nome = Console.ReadLine();
+
+        Console.Write("Telefone: ");
+        string telefone = Console.ReadLine();
+
+        Console.Write("Email: ");
+        string email = Console.ReadLine();
+
+        string contato = $"{nome},{telefone},{email}";
+
+        try
+        {
+            // Adiciona o contato ao arquivo
+            using (StreamWriter sw = new StreamWriter(arquivoContatos, true))
+            {
+                sw.WriteLine(contato);
+            }
+            Console.WriteLine("Contato cadastrado com sucesso!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao salvar o contato: {ex.Message}");
+        }
+
+        Console.WriteLine("Pressione qualquer tecla para continuar...");
+        Console.ReadKey();
+    }
+
+    static void ListarContatos()
+    {
+        Console.Clear();
+        Console.WriteLine("=== Contatos Cadastrados ===");
+
+        if (File.Exists(arquivoContatos))
+        {
+            string[] contatos = File.ReadAllLines(arquivoContatos);
+
+            if (contatos.Length == 0)
+            {
+                Console.WriteLine("Nenhum contato cadastrado.");
+            }
+            else
+            {
+                foreach (string contato in contatos)
+                {
+                    string[] dados = contato.Split(',');
+                    Console.WriteLine($"Nome: {dados[0]} | Telefone: {dados[1]} | Email: {dados[2]}");
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("Nenhum contato cadastrado.");
+        }
+
+        Console.WriteLine("Pressione qualquer tecla para continuar...");
+        Console.ReadKey();
+    }
+}
